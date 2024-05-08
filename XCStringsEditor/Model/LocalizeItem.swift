@@ -8,6 +8,32 @@
 import Foundation
 import SwiftUI
 
+
+enum TranslationStatus {
+    case missingTranslation // Translation is missing
+    case missingReverse     // Reverse translation is missing
+    case different          // Reverse translation and source are very different
+    case similiar           // Reverse translation is similar to the source
+    case exact              // Reverse translation is the same as the source
+    
+    
+    func color() -> Color {
+        switch self {
+        case .exact:
+            return .green
+        case .missingTranslation:
+            return .clear
+        case .missingReverse:
+            return .gray
+        case .different:
+            return .red
+        case .similiar:
+            return .yellow
+        }
+    }
+}
+
+
 @Observable
 class LocalizeItem: Identifiable, Hashable, CustomStringConvertible {
     static func == (lhs: LocalizeItem, rhs: LocalizeItem) -> Bool {
@@ -74,6 +100,34 @@ class LocalizeItem: Identifiable, Hashable, CustomStringConvertible {
     var needsReview: Bool
 
     var isModified: Bool = false
+    
+    
+    var status : TranslationStatus {
+        guard let _ = translation else { return .missingTranslation }
+        guard let reverseTranslation = reverseTranslation else { return .missingReverse }
+        
+        if sourceString == reverseTranslation {
+            return .exact
+        }
+        
+        if sourceString.uppercased() == reverseTranslation.uppercased() {
+            return .similiar
+        }
+        
+        return .different
+
+    }
+    
+    var isIdentical: Bool {
+        guard let reverseTranslation = reverseTranslation else { return false }
+        return sourceString == reverseTranslation
+    }
+    
+    var isAlmostIdentical: Bool {
+        guard let reverseTranslation = reverseTranslation else { return false }
+        return sourceString != reverseTranslation && sourceString.uppercased() == reverseTranslation.uppercased()
+    }
+
 //    var isEditing: Bool = false
     
     var children: [LocalizeItem]?
