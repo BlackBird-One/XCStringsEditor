@@ -186,7 +186,7 @@ struct ContentView: View {
                                     Text("Translated").tag(1)
                                     Text("Untranslated").tag(2)
                                 }
-                                Picker(selection: $stringsModel.filter.reverse, label: Text("Reverse")) {
+                                Picker(selection: $stringsModel.filter.translationQuality, label: Text("Quality")) {
                                     Text("All").tag(0)
                                     Text("Missing").tag(1)
                                     Text("Different").tag(2)
